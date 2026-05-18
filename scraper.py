@@ -51,7 +51,8 @@ def parse_anime(html):
 
         ls = re.search(r'text-gray-600 mb-2(.*?)</div>\s*<!-- 底部信息', card, re.DOTALL)
         if ls:
-            for label, url in re.findall(r'([\w\u4e00-\u9fff]+)\s*<a\s+href="([^"]+)"', ls.group(1)):
+            # FIXED: allow optional : or ; between label and <a> tag (e.g. "百度:<a" or "百度;<a")
+            for label, url in re.findall(r'([\w\u4e00-\u9fff]+)[:;]?\s*<a\s+href="([^"]+)"', ls.group(1)):
                 lb = label.strip()
                 if 'quark' in lb.lower() or '夸克' in lb:
                     item.setdefault('quark', []).append(url)
