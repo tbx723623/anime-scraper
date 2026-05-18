@@ -45,11 +45,16 @@ jobs:
           if [ -n "$SHA" ]; then
             echo "Updating existing file (SHA: $SHA)"
             curl -s -X PUT "$API_BASE" \
-              -d "access_token=${GITEE_TOKEN}&content=${CONTENT}&sha=${SHA}&message=Update beeweb_today.json"
+              --data-urlencode "access_token=${GITEE_TOKEN}" \
+              --data-urlencode "content=${CONTENT}" \
+              --data-urlencode "sha=${SHA}" \
+              --data-urlencode "message=Update beeweb_today.json"
             echo "Updated on Gitee"
           else
             echo "Creating new file"
             curl -s -X POST "$API_BASE" \
-              -d "access_token=${GITEE_TOKEN}&content=${CONTENT}&message=Update beeweb_today.json"
+              --data-urlencode "access_token=${GITEE_TOKEN}" \
+              --data-urlencode "content=${CONTENT}" \
+              --data-urlencode "message=Update beeweb_today.json"
             echo "Created on Gitee"
           fi
