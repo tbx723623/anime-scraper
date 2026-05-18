@@ -33,3 +33,23 @@ jobs:
             git push
             echo "Pushed updated JSON to repo"
           fi
+
+      - name: Sync to Gitee
+        env:
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          CONTENT=$(base64 -w0 beeweb_today.json)
+          API_BASE="https://gitee.com/api/v5/repos/tbxly/anime-scraper/contents/beeweb_today.json"
+          SHA=$(curl -s "${API_BASE}?access_token=${GITEE_TOKEN}" | jq -r '.sha // ""')
+
+          if [ -n "$SHA" ]; then
+            echo "Updating existing file (SHA: $SHA)"
+            curl -s -X PUT "$API_BASE" \
+              -d "access_token=${GITEE_TOKEN}&content=${CONTENT}&sha=${SHA}&message=Update beeweb_today.json"
+            echo "Updated on Gitee"
+          else
+            echo "Creating new file"
+            curl -s -X POST "$API_BASE" \
+              -d "access_token=${GITEE_TOKEN}&content=${CONTENT}&message=Update beeweb_today.json"
+            echo "Created on Gitee"
+          fi
